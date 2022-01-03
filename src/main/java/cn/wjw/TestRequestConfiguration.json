@@ -1,0 +1,40 @@
+{
+  "rows": [
+    {
+      "productObjectPath": "QUOTE_OPTION",
+      "min": 0,
+      "max": 1,
+      "fields": ""
+    },
+    {
+      "productObjectPath": "QUOTE_OPTION.ABDAPOLICY[P001]",
+      "min": 1,
+      "max": 1,
+      "fields": "FIELD_001,FIELD_002"
+    },
+    {
+      "productObjectPath": "QUOTE_OPTION.ABDAPOLICY[P001].ABDAXREF[P002]",
+      "min": 0,
+      "max": 1,
+      "fields": "FIELD_003,FIELD_004"
+    },
+    {
+      "productObjectPath": "QUOTE_OPTION.ABDAPOLICY[P001].ABDAPOLPR[P003]",
+      "min": 0,
+      "max": 10,
+      "fields": "FIELD_005,FIELD_006"
+    },
+    {
+      "productObjectPath": "QUOTE_OPTION.ABDAPOLICY[P001].ABDAPOLPR[P003].ABDAPAC",
+      "min": 0,
+      "max": 1,
+      "fields": "FIELD_007,FIELD_008"
+    },
+    {
+      "productObjectPath": "QUOTE_OPTION.ABDAPOLICY[P001].ABDAPOLPR[P004]",
+      "min": 0,
+      "max": 10,
+      "fields": "FIELD_009,FIELD_010"
+    }
+  ]
+}

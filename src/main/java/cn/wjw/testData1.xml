@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<QUOTE_OPTION>
+    <ABDAPOLICY>
+        <PRODUCT_BASE_ID>P001</PRODUCT_BASE_ID>
+        <FIELD_001>001''</FIELD_001>
+        <FIELD_002>002''</FIELD_002>
+        <ABDAXREF>
+            <PRODUCT_BASE_ID>P002</PRODUCT_BASE_ID>
+            <FIELD_003>003''</FIELD_003>
+            <FIELD_004>004''</FIELD_004>
+        </ABDAXREF>
+        <ABDAPOLPR>
+            <PK_ID>1</PK_ID>
+            <PRODUCT_BASE_ID>P003</PRODUCT_BASE_ID>
+            <FIELD_005>005''</FIELD_005>
+            <FIELD_006>006''</FIELD_006>
+            <ABDAPAC>
+                <FIELD_007>007''</FIELD_007>
+                <FIELD_008>008''</FIELD_008>
+            </ABDAPAC>
+        </ABDAPOLPR>
+        <ABDAPOLPR>
+            <PK_ID>3</PK_ID>
+            <PRODUCT_BASE_ID>P004</PRODUCT_BASE_ID>
+            <FIELD_009>009''</FIELD_009>
+            <FIELD_010>010''</FIELD_010>
+        </ABDAPOLPR>
+    </ABDAPOLICY>
+</QUOTE_OPTION>
