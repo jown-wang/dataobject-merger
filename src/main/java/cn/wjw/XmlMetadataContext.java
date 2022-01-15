@@ -47,70 +47,79 @@ public class XmlMetadataContext {
 
     private ObjectDefinition createXmlDefinition(XmlMetadataConfiguration xmlMetadataConfiguration) {
 
+        // key是path的产品对象定义的map，在构造父子关系时，通过父节点的path从map中获取父节点。
         Map<String, ObjectDefinition> pathObjectDefinitionMap = new HashMap<>();
-        ObjectDefinition root = null;
 
-        for (XmlMetadataConfiguration.Row row : xmlMetadataConfiguration.getRows()) {
+        List<XmlMetadataConfiguration.Row> rows = new ArrayList<>(xmlMetadataConfiguration.getRows());
+
+        XmlMetadataConfiguration.Row firstRow = rows.remove(0);
+        ObjectDefinition root = this.createRootObjectDefinition(firstRow);
+        pathObjectDefinitionMap.put(firstRow.getProductObjectPath(), root);
+
+        for (XmlMetadataConfiguration.Row row : rows) {
+
+            ObjectDefinition objectDefinition = new ObjectDefinition();
 
             String path = row.getProductObjectPath();
-            // 取得父产品对象和当前产品对象的字符串值
-            String parentPath = null;
-            String productObjectStr;
-
-            // 如果存在父产品对象
-            if (path.contains(PRODUCT_OBJECT_DELIMITER)) {
-
-                // 获取最后一个"."的位置
-                int lastObjectDelimiterIndex = path.lastIndexOf(PRODUCT_OBJECT_DELIMITER);
-                // 获取最后一个"."之后的字符串，即当前产品对象的表名和productBaseId;
-                productObjectStr = path.substring(lastObjectDelimiterIndex + 1);
-                // 截取最后一个"."之前的字符串，即父产品对象的path
-                parentPath = path.substring(0, lastObjectDelimiterIndex);
-            } else {
-                productObjectStr = path;
-            }
-
-            // 取得表名和productBaseId
-            String tableName;
-            String productBaseId = null;
+            // 获取最后一个"."的位置
+            int lastObjectDelimiterIndex = path.lastIndexOf(PRODUCT_OBJECT_DELIMITER);
+            // 获取最后一个"."之后的字符串，即当前产品对象的表名和productBaseId;
+            String productObjectStr = path.substring(lastObjectDelimiterIndex + 1);
             // 如果存在productBaseId，分割表名和productBaseId
             if (productObjectStr.contains("[")) {
                 String[] productObjectArray = productObjectStr.split("\\[");
-                tableName = productObjectArray[0];
-                productBaseId = productObjectArray[1].replace("]", "");
+                objectDefinition.setTableName(productObjectArray[0]);
+                objectDefinition.setProductBaseId(productObjectArray[1].replace("]", ""));
             } else {
-                tableName = productObjectStr;
+                objectDefinition.setTableName(productObjectStr);
+                objectDefinition.setProductBaseId(UNDEFINED_VALUE);
             }
+            objectDefinition.setMin(row.getMin());
+            objectDefinition.setMax(row.getMax());
+            objectDefinition.setFieldsList(this.splitFields(row.getFields()));
 
-            ObjectDefinition objectDefinition = new ObjectDefinition.Builder()
-                    .tableName(tableName)
-                    .productBaseId(productBaseId == null || "".equals(productBaseId) ? UNDEFINED_VALUE: productBaseId)
-                    .max(row.getMax())
-                    .min(row.getMin())
-                    .fields(row.getFields())
-                    .build();
+            // 截取最后一个"."之前的字符串，即父产品对象的path
+            String parentPath = path.substring(0, lastObjectDelimiterIndex);
+            if (!pathObjectDefinitionMap.containsKey(parentPath)) {
+                throw new RuntimeException();
+            }
+            // 用父产品对象的path获取到父产品对象
+            ObjectDefinition parent = pathObjectDefinitionMap.get(parentPath);
+            Map<String, TableDefinition> tableGroupMap = parent.getChildrenTableGroupMap();
+            if (tableGroupMap.containsKey(objectDefinition.getTableName())) {
+                TableDefinition tableDefinition = tableGroupMap.get(objectDefinition.getTableName());
+                Map<String, ObjectDefinition> objectGroupMap = tableDefinition.getObjectGroupMap();
 
-            if(Objects.nonNull(parentPath)) {
-
-                if (!pathObjectDefinitionMap.containsKey(parentPath)) {
+                if (objectGroupMap.containsKey(objectDefinition.getProductBaseId())) {
                     throw new RuntimeException();
                 }
-                // 用父产品对象的path获取到父产品对象
-                ObjectDefinition parentObjectDefinition = pathObjectDefinitionMap.get(parentPath);
-                Map<String, TableDefinition> tableGroupMap = parentObjectDefinition.getChildrenTableGroupMap();
-                if (!tableGroupMap.containsKey(tableName)) {
-                    tableGroupMap.put(tableName, new TableDefinition());
-                }
-                TableDefinition tableDefinition = tableGroupMap.get(tableName);
-                tableDefinition.getObjectGroupMap().put(objectDefinition.getProductBaseId(), objectDefinition);
+                objectGroupMap.put(objectDefinition.getProductBaseId(), objectDefinition);
             } else {
-                root = objectDefinition;
+                TableDefinition tableDefinition = new TableDefinition();
+                tableDefinition.getObjectGroupMap().put(objectDefinition.getProductBaseId(), objectDefinition);
+                tableGroupMap.put(objectDefinition.getTableName(), tableDefinition);
             }
 
             pathObjectDefinitionMap.put(path, objectDefinition);
         }
 
         return root;
+    }
+
+    private ObjectDefinition createRootObjectDefinition(XmlMetadataConfiguration.Row rootRow) {
+        ObjectDefinition root = new ObjectDefinition();
+        root.setTableName(rootRow.getProductObjectPath());
+        root.getFieldsList().addAll(this.splitFields(rootRow.getFields()));
+        return root;
+    }
+
+    private List<String> splitFields(String fieldsStr) {
+
+        if ("".equals(fieldsStr) || Objects.isNull(fieldsStr)) {
+            return Collections.emptyList();
+        }
+
+        return List.of(fieldsStr.split(","));
     }
 
     public static void main(String[] args) throws Exception {

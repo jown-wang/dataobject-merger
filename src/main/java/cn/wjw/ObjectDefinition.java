@@ -20,65 +20,6 @@ public class ObjectDefinition {
     /** 用表名分组的子产品对象定义Map */
     private Map<String, TableDefinition> childrenTableGroupMap = new HashMap<>();
 
-    private ObjectDefinition(Builder builder) {
-        this.tableName = builder.tableName;
-        this.productBaseId = builder.productBaseId;
-        this.min = builder.min;
-        this.max = builder.max;
-        this.fieldsList = builder.fieldsList;
-        this.childrenTableGroupMap = builder.childrenTableGroupMap;
-    }
-
-    public static class Builder {
-
-        private ObjectDefinition parent;
-
-        private String tableName;
-
-        private String productBaseId;
-
-        private int min;
-
-        private int max;
-
-        private List<String> fieldsList = new LinkedList<>();
-
-        private Map<String, TableDefinition> childrenTableGroupMap = new HashMap<>();
-
-        public Builder() {}
-
-        public Builder tableName(String tableName) {
-            this.tableName = tableName;
-            return this;
-        }
-
-        public Builder productBaseId(String productBaseId) {
-            this.productBaseId = productBaseId;
-            return this;
-        }
-
-        public Builder min(int min) {
-            this.min = min;
-            return this;
-        }
-
-        public Builder max(int max) {
-            this.max = max;
-            return this;
-        }
-
-        public Builder fields(String fieldsStr) {
-            this.fieldsList = List.of(fieldsStr.split(","));
-            return this;
-        }
-
-        public ObjectDefinition build() {
-            ObjectDefinition objectDefinition = new ObjectDefinition(this);
-            return objectDefinition;
-        }
-
-    }
-
     public String getTableName() {
         return tableName;
     }

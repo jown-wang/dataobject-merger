@@ -185,8 +185,8 @@ public class DataObjectMergerImpl implements DataObjectMerger {
                 }
 
                 // 递归删除目标产品对象及其子产品对象
-                List<String> fieldsList = objectDefinition.getFieldsList();
                 for (DataObject sourceProductObject: sourceProductObjectListMap.get(productBaseId)) {
+                    List<String> fieldsList = objectDefinition.getFieldsList();
                     DataObjectMergeableWrapper targetProductObject = target.insert(sourceProductObject, fieldsList);
                     this.appendInternal(sourceProductObject, targetProductObject, objectDefinition);
                 }
